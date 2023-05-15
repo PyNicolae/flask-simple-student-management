@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    
+    <h1>Student Management</h1>
+
+    <h2>Add students</h2>
+    <form id="add-student-form">
+
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name"><br>
+
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name"><br>
+            
+            <label for="student_id">Student ID:</label>
+            <input type="number" id="student_id" name="student_id"><br>
+
+            <label for="average_grade">Average Grade:</label>
+            <input type="number" id="average_grade" name="average_grade"><br>
+
+            <input type="submit" value="Add Student">
+
+    </form>
+
+        <hr>
+
+    <h2>Get a Student</h2>
+    <form id="get-student-form">
+            <label for="student-id-get">Student ID:</label>
+            <input type="number" id="student-id-get" name="student-id-get"><br>
+
+            <input type="submit" value="Get Student">
+    </form>
+
+        <hr>
+
+    <div id="student-info"></div>
+
+    <script>
+        $(function() {
+    $('#get-student-form').submit(function(event) {
+        event.preventDefault();
+        var studentId = $('#student-id-get').val(); 
+        $.ajax({
+            url: '/students/' + studentId,
+            method: 'GET',
+            success: function(data) {
+                $('#student-info').text(JSON.stringify(data));
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('#student-info').text(jqXHR.responseJSON.message);
+            }
+        });
+    });
+
+    $('#add-student-form').submit(function(event) {
+        event.preventDefault();
+        var first_name = $('#first_name').val();
+        var last_name = $('#last_name').val();
+        var student_id = $('#student_id').val(); 
+        var average_grade = $('#average_grade').val();
+        $.ajax({
+            url: '/students',
+            method: 'POST',
+            data: JSON.stringify({
+                first_name: first_name,
+                last_name: last_name,
+                student_id: student_id,
+                average_grade: average_grade
+            }),
+            contentType: 'application/json',
+            success: function(data) {
+                $('#student-info').text(data.message);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('#student-info').text(jqXHR.responseJSON.message);
+            }
+        });
+    });
+});
+    </script>
+</body>
+</html>
